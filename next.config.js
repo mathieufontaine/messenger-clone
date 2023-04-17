@@ -7,6 +7,14 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/addMessage",
+        destination: "http://localhost:3000/api/addMessage",
+      },
+    ];
+  },
 }
 
 module.exports = nextConfig

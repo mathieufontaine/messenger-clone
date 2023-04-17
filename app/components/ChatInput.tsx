@@ -1,14 +1,42 @@
 "use client";
 
+import { Message } from "@/typings";
 import { FormEvent, useState } from "react";
+import useSWR from "swr";
+import { v4 as uuidv4 } from "uuid";
 
 function ChatInput() {
   const [input, setInput] = useState("");
+//   const {data, error, mutate} = useSWR('/api/getMessages', fetcher, {refreshInterval: 1000})
 
-  const handleSubmit = (e:FormEvent<HTMLFormElement>) => {
+  const uploadMessageToUpstash = async (message: Message) => {
+    console.log(message)
+    const response = await fetch("/api/addMessage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message }),
+    });
+    const data = await response.json();
+    console.log(data);
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(!input) return;
-    const messageToSend = input;
+    if (!input) return;
+    const message: Message = {
+      id: uuidv4(),
+      message: input,
+      createdAt: Date.now(),
+      user: {
+        id: "1",
+        username: "John",
+        avatar: "https://i.pravatar.cc/150?img=5",
+      },
+    };
+
+    uploadMessageToUpstash(message as Message);
     setInput("");
   };
 
