@@ -20,5 +20,5 @@ export async function POST(req: NextRequest) {
         console.log(error);
         return NextResponse.json({ message: 'Internal server error' });
     }
-    return NextResponse.json({ message: 'Message added' });
+    return NextResponse.json({ message: newMessage });
 }

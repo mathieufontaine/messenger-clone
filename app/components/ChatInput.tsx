@@ -1,16 +1,18 @@
 "use client";
 
 import { Message } from "@/typings";
+import fetcher from "@/utils/fetchMessages";
 import { FormEvent, useState } from "react";
 import useSWR from "swr";
 import { v4 as uuidv4 } from "uuid";
 
 function ChatInput() {
   const [input, setInput] = useState("");
-//   const {data, error, mutate} = useSWR('/api/getMessages', fetcher, {refreshInterval: 1000})
+  const {data: messages, error, mutate} = useSWR('/api/getMessages', fetcher, {refreshInterval: 5000})
+    
+  console.log(messages)
 
   const uploadMessageToUpstash = async (message: Message) => {
-    console.log(message)
     const response = await fetch("/api/addMessage", {
       method: "POST",
       headers: {
@@ -19,10 +21,10 @@ function ChatInput() {
       body: JSON.stringify({ message }),
     });
     const data = await response.json();
-    console.log(data);
+    return [data.message, ...messages!];
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input) return;
     const message: Message = {
@@ -35,8 +37,10 @@ function ChatInput() {
         avatar: "https://i.pravatar.cc/150?img=5",
       },
     };
-
-    uploadMessageToUpstash(message as Message);
+    await mutate(uploadMessageToUpstash(message as Message), {
+        optimisticData: [message, ...messages!],
+        rollbackOnError: true
+    })
     setInput("");
   };
 
