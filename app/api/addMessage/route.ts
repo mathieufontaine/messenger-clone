@@ -1,6 +1,7 @@
 import redis from "@/redis";
 import { NextRequest, NextResponse } from "next/server";
 import { Message } from "../../../typings";
+import { serverPusher } from "../../../utils/pusher";
 
 export async function POST(req: NextRequest) {
 
@@ -16,6 +17,7 @@ export async function POST(req: NextRequest) {
 
     try {
         await redis.hset('messages', message.id, JSON.stringify(newMessage));
+        serverPusher.trigger('messages', 'newMessage', newMessage);
     } catch (error) {
         console.log(error);
         return NextResponse.json({ message: 'Internal server error' });
