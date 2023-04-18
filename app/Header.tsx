@@ -20,8 +20,9 @@ function Header() {
         {session ? (
           <div className="flex items-center justify-between">
             <div className="mr-4">
-              <p>Logged in as: </p>
-              <p className="font-bold">Mathieu</p>
+              <p>Logged in as: 
+              <span className="font-bold"> Mathieu</span>
+              </p>
             </div>
             <LogoutButton />
           </div>

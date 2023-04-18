@@ -5,12 +5,12 @@ import fetcher from "@/utils/fetchMessages";
 import { FormEvent, useState } from "react";
 import useSWR from "swr";
 import { v4 as uuidv4 } from "uuid";
+// import {messages} from "../../data"
 
 function ChatInput() {
   const [input, setInput] = useState("");
   const {data: messages, error, mutate} = useSWR('/api/getMessages', fetcher, {refreshInterval: 5000})
-    
-  console.log(messages)
+
 
   const uploadMessageToUpstash = async (message: Message) => {
     const response = await fetch("/api/addMessage", {
@@ -37,16 +37,16 @@ function ChatInput() {
         avatar: "https://i.pravatar.cc/150?img=5",
       },
     };
+    setInput("");
     await mutate(uploadMessageToUpstash(message as Message), {
         optimisticData: [message, ...messages!],
         rollbackOnError: true
     })
-    setInput("");
   };
 
   return (
     <form
-      className="flex w-full fixed bottom-0 p-4 z-50 bg-slate-800"
+      className="flex w-full fixed bottom-0 left-0 p-4 z-50 bg-slate-800"
       onSubmit={handleSubmit}
     >
       <input
